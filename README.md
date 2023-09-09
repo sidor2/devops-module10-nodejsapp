@@ -1,4 +1,4 @@
-## demo app - developing with Docker
+## Demo app - Deploying Images in Kubernetes from private Docker repository
 
 This demo app shows a simple user profile app set up using 
 - index.html with pure js and css styles
