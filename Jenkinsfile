@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Webhook Received') {
             steps {
-                echo 'Jenkins server received the webhook 2'
+                echo 'Jenkins server received the webhook 3'
             }
         }
     }
