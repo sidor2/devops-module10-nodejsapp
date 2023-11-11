@@ -57,9 +57,8 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker Image: $env.IMAGE_NAME"
-                    // buildImage "ilsoldier/devops:$env.IMAGE_NAME"
-                    // dockerLogin()
-                    // dockerPush "ilsoldier/devops:$env.IMAGE_NAME"
+                    def image = "$DOCKER_REGISTRY/$DOCKER_IMAGE:latest"
+                    docker build -t $image .
                 }
             }
         }
