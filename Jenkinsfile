@@ -58,7 +58,8 @@ pipeline {
                 script {
                     echo "Fetching AWS Credentials from IMDSv2"
                     sh "pwd"
-                    sh 'TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`'
+                    
+                    sh TOKEN="`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`"
                     sh 'curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/iam/security-credentials/JenkinsInstanceRole > creds.json'
                 }
             }
