@@ -37,22 +37,22 @@ pipeline {
         //     }
         // }
 
-        stage('Increment Version') {
-            steps {
-                script {
-                    dir('app'){
-                        sh 'npm version patch'
+        // stage('Increment Version') {
+        //     steps {
+        //         script {
+        //             dir('app'){
+        //                 sh 'npm version patch'
 
-                        def packageJson = readJSON file: 'package.json'
-                        def version = packageJson.version
+        //                 def packageJson = readJSON file: 'package.json'
+        //                 def version = packageJson.version
 
-                        // set the new version as part of IMAGE_NAME
-                        env.IMAGE_NAME = "$DOCKER_IMAGE:$version"
+        //                 // set the new version as part of IMAGE_NAME
+        //                 env.IMAGE_NAME = "$DOCKER_IMAGE:$version"
 
-                    }
-                }
-            }
-        }
+        //             }
+        //         }
+        //     }
+        // }
         stage('Fetch AWS Credentials from IMDSv2') {
             steps {
                 script {
@@ -63,23 +63,23 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    def image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}"
-                    echo "Building Docker Image: ${image}"
-                    sh "which docker"
-                    sh "docker build -t ${image} ."
-                }
-            }
-        }
+        // stage('Build Docker Image') {
+        //     steps {
+        //         script {
+        //             def image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}"
+        //             echo "Building Docker Image: ${image}"
+        //             sh "which docker"
+        //             sh "docker build -t ${image} ."
+        //         }
+        //     }
+        // }
 
-        stage('commit to git'){
-            steps{
-                script{
-                    commitToGithub("${GIT_CREDENTIALS}","devops-module10-nodejsapp","master")
-                }
-            }
-        }
+        // stage('commit to git'){
+        //     steps{
+        //         script{
+        //             commitToGithub("${GIT_CREDENTIALS}","devops-module10-nodejsapp","master")
+        //         }
+        //     }
+        // }
     }
 }
