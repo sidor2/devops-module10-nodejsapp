@@ -82,6 +82,8 @@ pipeline {
                     ).trim()
                     def TEMP_ROLE = readJSON text: "${CREDENTIALS}"
 
+                    echo "${TEMP_ROLE}"
+
                     // Extract credentials
                     AWS_ACCESS_KEY_ID = TEMP_ROLE.AccessKeyId
                     AWS_SECRET_ACCESS_KEY = TEMP_ROLE.SecretAccessKey
@@ -95,9 +97,7 @@ pipeline {
                             echo "ID: ${AWS_ACCESS_KEY_ID}"
                         }
                     }
-}
-
-                
+                }
             }
         }
         // stage('Build Docker Image') {
