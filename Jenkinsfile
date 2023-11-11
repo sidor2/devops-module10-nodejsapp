@@ -9,17 +9,19 @@ library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
 
 pipeline {
     agent any
-    stages {
-        tools {
+    
+    tools {
             nodejs 'nodejs-20'
         }
 
-        environment {
-            DOCKER_IMAGE = 'devops-module10'
-            DOCKER_REGISTRY = '253021321210.dkr.ecr.us-west-2.amazonaws.com'
-            GIT_CREDENTIALS = '2c40c606-3564-4fc4-8fc2-3a89a016f089'
-        }
+    environment {
+        DOCKER_IMAGE = 'devops-module10'
+        DOCKER_REGISTRY = '253021321210.dkr.ecr.us-west-2.amazonaws.com'
+        GIT_CREDENTIALS = '2c40c606-3564-4fc4-8fc2-3a89a016f089'
+    }
 
+    stages {
+        
         stage('Checkout') {
             steps {
                 checkout scm
