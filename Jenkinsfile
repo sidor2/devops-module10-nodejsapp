@@ -56,7 +56,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}}"
+                    def image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}"
                     echo "Building Docker Image: ${image}"
                     sh "which docker"
                     sh "docker build -t ${image} ."
