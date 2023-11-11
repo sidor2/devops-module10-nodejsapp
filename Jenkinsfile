@@ -47,7 +47,7 @@ pipeline {
                         def version = packageJson.version
 
                         // set the new version as part of IMAGE_NAME
-                        env.IMAGE_NAME = "$DOCKER_IMAGE-$version-$BUILD_NUMBER"
+                        env.IMAGE_NAME = "$DOCKER_IMAGE:$version"
 
                     }
                 }
@@ -56,10 +56,11 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    echo "Building Docker Image: $env.IMAGE_NAME"
+                    def image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}}"
+                    echo "Building Docker Image: ${image}"
                     sh "which docker"
-                    def image = "${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE}:latest"
                     sh "docker build -t ${image} ."
+
                 }
             }
         }
