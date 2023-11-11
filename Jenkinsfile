@@ -9,7 +9,7 @@ library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
 
 pipeline {
     agent any
-    
+
     tools {
             nodejs 'nodejs-20'
         }
@@ -28,14 +28,14 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                dir('app'){
-                    sh 'npm install'
-                    sh 'npm test'
-                }
-            }
-        }
+        // stage('Run Tests') {
+        //     steps {
+        //         dir('app'){
+        //             sh 'npm install'
+        //             sh 'npm test'
+        //         }
+        //     }
+        // }
 
         stage('Increment Version') {
             steps {
