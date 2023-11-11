@@ -53,6 +53,25 @@ pipeline {
                 }
             }
         }
+        stage('Fetch AWS Credentials from IMDSv2') {
+            steps {
+                script {
+                    // Fetch the session token
+                    def token = sh(script: "curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600'", returnStdout: true).trim()
+                    
+                    // Fetch the IAM role name
+                    def roleName = sh(script: "curl -H 'X-aws-ec2-metadata-token: ${token}' http://169.254.169.254/latest/meta-data/iam/security-credentials/", returnStdout: true).trim()
+
+                    // Fetch the IAM role credentials
+                    def roleCredentials = sh(script: "curl -H 'X-aws-ec2-metadata-token: ${token}' http://169.254.169.254/latest/meta-data/iam/security-credentials/${roleName}", returnStdout: true).trim()
+
+                    // Set environment variables for AWS credentials
+                    env.AWS_ACCESS_KEY_ID = roleCredentials.accessKeyId
+                    env.AWS_SECRET_ACCESS_KEY = roleCredentials.secretAccessKey
+                    env.AWS_SESSION_TOKEN = roleCredentials.token
+                }
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 script {
@@ -60,7 +79,6 @@ pipeline {
                     echo "Building Docker Image: ${image}"
                     sh "which docker"
                     sh "docker build -t ${image} ."
-
                 }
             }
         }
