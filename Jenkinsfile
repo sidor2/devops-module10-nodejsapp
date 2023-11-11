@@ -64,24 +64,29 @@ pipeline {
                 script {
                     // Define metadata URL and headers for IMDSv2
                     def IMDSv2_URL = 'http://169.254.169.254/latest/meta-data/iam/security-credentials/'
+                    echo "IMDSv2_URL: ${IMDSv2_URL}"
+
                     def IMDSv2_TOKEN = sh (
                         script: "curl -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\"",
                         returnStdout: true
                     ).trim()
+                    echo "IMDSv2_TOKEN: ${IMDSv2_TOKEN}"
 
                     // Retrieve the role name
                     def ROLE_NAME = sh (
                         script: "curl -H \"X-aws-ec2-metadata-token: ${IMDSv2_TOKEN}\" ${IMDSv2_URL}",
                         returnStdout: true
                     ).trim()
+                    echo "ROLE_NAME: ${ROLE_NAME}"
 
                     // Retrieve the credentials
                     def CREDENTIALS = sh (
                         script: "curl -H \"X-aws-ec2-metadata-token: ${IMDSv2_TOKEN}\" ${IMDSv2_URL}${ROLE_NAME}",
                         returnStdout: true
                     ).trim()
-                    def TEMP_ROLE = readJSON text: "${CREDENTIALS}"
+                    echo "CREDENTIALS: ${CREDENTIALS}"
 
+                    def TEMP_ROLE = readJSON text: "${CREDENTIALS}"
                     echo "${TEMP_ROLE}"
 
                     // Extract credentials
