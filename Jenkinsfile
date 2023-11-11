@@ -57,6 +57,7 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker Image: $env.IMAGE_NAME"
+                    sh "which docker"
                     def image = "${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE}:latest"
                     sh "docker build -t ${image} ."
                 }
