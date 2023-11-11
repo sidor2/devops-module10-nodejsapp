@@ -56,24 +56,8 @@ pipeline {
         stage('Fetch AWS Credentials from IMDSv2') {
             steps {
                 script {
-                    // Fetch the session token
-                    env.TOKEN = sh(script: "curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600'", returnStdout: true).trim()
-
-                    // Fetch the IAM role name
-                    env.ROLE_NAME = sh(script: "curl -H 'X-aws-ec2-metadata-token: ${env.TOKEN}' http://169.254.169.254/latest/meta-data/iam/security-credentials/", returnStdout: true).trim()
-
-                    // Fetch the IAM role credentials and set environment variables
-                    withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
-                                     string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
-                                     string(credentialsId: 'AWS_SESSION_TOKEN', variable: 'AWS_SESSION_TOKEN')]) {
-                        sh '''
-                            curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/iam/security-credentials/$ROLE_NAME > temp_credentials.json
-                            export AWS_ACCESS_KEY_ID=$(jq -r '.AccessKeyId' temp_credentials.json)
-                            export AWS_SECRET_ACCESS_KEY=$(jq -r '.SecretAccessKey' temp_credentials.json)
-                            export AWS_SESSION_TOKEN=$(jq -r '.Token' temp_credentials.json)
-                            rm -f temp_credentials.json
-                        '''
-                    }
+                    sh "TOKEN=`curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600'`"
+                    sh "curl -H 'X-aws-ec2-metadata-token: $TOKEN' http://169.254.169.254/latest/meta-data/iam/security-credentials/JenkinsInstanceProfile > creds.json"
                 }
             }
         }
