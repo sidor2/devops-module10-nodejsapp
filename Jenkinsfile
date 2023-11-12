@@ -91,6 +91,8 @@ pipeline {
                             echo "ID: ${AWS_ACCESS_KEY_ID}"
                         }
                     }
+
+                    sh "aws sts get-caller-identity"
                 }
             }
         }
