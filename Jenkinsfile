@@ -68,7 +68,8 @@ pipeline {
                     echo "Building Docker Image: ${image}"
                     sh "which docker"
                     sh "docker build -t ${image} ."
-                    sh "aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${env.DOCKER_REGISTRY}"
+                    // sh "aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${env.DOCKER_REGISTRY}"
+                    sh "docker login ${env.DOCKER_REGISTRY}"
                     sh "docker push ${image}"
                 }
             }
