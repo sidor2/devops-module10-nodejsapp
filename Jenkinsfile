@@ -93,7 +93,7 @@ pipeline {
                     // }
                     // Retrieve AWS Credentials
                     // def creds = getAwsEC2creds()
-                    getAwsEC2creds()
+                    getAwsEC2creds
 
                     // Extract individual credentials
                     // def awsAccessKeyId = creds[0]
