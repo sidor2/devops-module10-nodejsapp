@@ -56,42 +56,43 @@ pipeline {
         stage('Fetch AWS Credentials from IMDSv2') {
             steps {
                 script {
-                    // Define metadata URL and headers for IMDSv2
-                    def IMDSv2_URL = 'http://169.254.169.254/latest/meta-data/iam/security-credentials/'
+                    // // Define metadata URL and headers for IMDSv2
+                    // def IMDSv2_URL = 'http://169.254.169.254/latest/meta-data/iam/security-credentials/'
                     
-                    def IMDSv2_TOKEN = sh (
-                        script: "curl -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\"",
-                        returnStdout: true
-                    ).trim()
+                    // def IMDSv2_TOKEN = sh (
+                    //     script: "curl -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\"",
+                    //     returnStdout: true
+                    // ).trim()
                     
-                    // Retrieve the role name
-                    def ROLE_NAME = sh (
-                        script: "curl -H \"X-aws-ec2-metadata-token: ${IMDSv2_TOKEN}\" ${IMDSv2_URL}",
-                        returnStdout: true
-                    ).trim()
+                    // // Retrieve the role name
+                    // def ROLE_NAME = sh (
+                    //     script: "curl -H \"X-aws-ec2-metadata-token: ${IMDSv2_TOKEN}\" ${IMDSv2_URL}",
+                    //     returnStdout: true
+                    // ).trim()
                     
-                    // Retrieve the credentials
-                    def CREDENTIALS = sh (
-                        script: "curl -H \"X-aws-ec2-metadata-token: ${IMDSv2_TOKEN}\" ${IMDSv2_URL}${ROLE_NAME}",
-                        returnStdout: true
-                    ).trim()
+                    // // Retrieve the credentials
+                    // def CREDENTIALS = sh (
+                    //     script: "curl -H \"X-aws-ec2-metadata-token: ${IMDSv2_TOKEN}\" ${IMDSv2_URL}${ROLE_NAME}",
+                    //     returnStdout: true
+                    // ).trim()
                     
-                    def TEMP_ROLE = readJSON text: "${CREDENTIALS}"
+                    // def TEMP_ROLE = readJSON text: "${CREDENTIALS}"
 
-                    // Extract credentials
-                    AWS_ACCESS_KEY_ID = TEMP_ROLE.AccessKeyId
-                    AWS_SECRET_ACCESS_KEY = TEMP_ROLE.SecretAccessKey
-                    AWS_SESSION_TOKEN = TEMP_ROLE.Token
+                    // // Extract credentials
+                    // AWS_ACCESS_KEY_ID = TEMP_ROLE.AccessKeyId
+                    // AWS_SECRET_ACCESS_KEY = TEMP_ROLE.SecretAccessKey
+                    // AWS_SESSION_TOKEN = TEMP_ROLE.Token
 
-                    // Mask passwords and set environment variables
-                    wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: AWS_ACCESS_KEY_ID], [password: AWS_SECRET_ACCESS_KEY], [password: AWS_SESSION_TOKEN]]]) {
-                        withEnv(['AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}', 'AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}', 'AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}']) {
-                            echo "TOKEN: ${AWS_SESSION_TOKEN}"
-                            echo "KEY: ${AWS_SECRET_ACCESS_KEY}"
-                            echo "ID: ${AWS_ACCESS_KEY_ID}"
-                        }
-                    }
-
+                    // // Mask passwords and set environment variables
+                    // wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: AWS_ACCESS_KEY_ID], [password: AWS_SECRET_ACCESS_KEY], [password: AWS_SESSION_TOKEN]]]) {
+                    //     withEnv(['AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}', 'AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}', 'AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}']) {
+                    //         echo "TOKEN: ${AWS_SESSION_TOKEN}"
+                    //         echo "KEY: ${AWS_SECRET_ACCESS_KEY}"
+                    //         echo "ID: ${AWS_ACCESS_KEY_ID}"
+                    //     }
+                    // }
+                    // Retrieve AWS Credentials
+                    def [awsAccessKeyId, awsSecretAccessKey, awsSessionToken] = getAwsEC2creds()
                     sh "aws sts get-caller-identity"
                 }
             }
