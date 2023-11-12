@@ -58,6 +58,7 @@ pipeline {
             steps {
                 script {
                     def creds = getAwsEC2creds()
+                    echo "Creds: ${creds}"
 
                     withEnv([
                         "AWS_ACCESS_KEY_ID=${creds[0]}",
@@ -67,7 +68,6 @@ pipeline {
                         echo "${AWS_ACCESS_KEY_ID}"
                         sh 'aws sts get-caller-identity'
                     }
-
                 }
             }
         }
