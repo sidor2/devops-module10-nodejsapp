@@ -64,6 +64,7 @@ pipeline {
                         "AWS_SECRET_ACCESS_KEY=${creds[1]}",
                         "AWS_SESSION_TOKEN=${creds[2]}"
                     ]) {
+                        echo "${AWS_ACCESS_KEY_ID}"
                         sh 'aws sts get-caller-identity'
                     }
 
