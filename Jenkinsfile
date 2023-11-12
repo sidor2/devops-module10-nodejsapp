@@ -57,8 +57,9 @@ pipeline {
         stage('Helper output') {
             steps {
                 script {
-                    // sh "aws sts get-caller-identity"
-                    sh "uname -a"
+                    getAwsEC2creds()
+                    sh "aws sts get-caller-identity"
+                    // sh "uname -a"
                 }
             }
         }
@@ -67,7 +68,6 @@ pipeline {
                 script {
                     def image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}"
                     echo "Building Docker Image: ${image}"
-                    sh "which docker"
                     sh "docker build -t ${image} ."
                     sh "aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${env.DOCKER_REGISTRY}"
                     sh "docker push ${image}"
