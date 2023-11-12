@@ -57,9 +57,7 @@ pipeline {
         stage('Helper output') {
             steps {
                 script {
-                    sh "uname -a"
                     def creds = getAwsEC2creds()
-                    echo "Creds: ${creds}"
 
                     withEnv([
                         "AWS_ACCESS_KEY_ID=${creds[0]}",
