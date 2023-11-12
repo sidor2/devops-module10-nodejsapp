@@ -57,7 +57,7 @@ pipeline {
         stage('Helper output') {
             steps {
                 script {
-                    echo "uname -a"
+                    sh "uname -a"
                     def creds = getAwsEC2creds()
                     echo "Creds: ${creds}"
 
