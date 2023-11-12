@@ -92,22 +92,23 @@ pipeline {
                     //     }
                     // }
                     // Retrieve AWS Credentials
-                    def creds = awsCredentialsRetriever.retrieveAWSCredentials()
+                    // def creds = getAwsEC2creds()
+                    getAwsEC2creds()
 
                     // Extract individual credentials
                     // def awsAccessKeyId = creds[0]
                     // def awsSecretAccessKey = creds[1]
                     // def awsSessionToken = creds[2]
-                    AWS_ACCESS_KEY_ID = creds[0]
-                    AWS_SECRET_ACCESS_KEY = creds[1]
-                    AWS_SESSION_TOKEN = creds[2]
-                    wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: AWS_ACCESS_KEY_ID], [password: AWS_SECRET_ACCESS_KEY], [password: AWS_SESSION_TOKEN]]]) {
-                        withEnv(['AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}', 'AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}', 'AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}']) {
-                            echo "TOKEN: ${AWS_SESSION_TOKEN}"
-                            echo "KEY: ${AWS_SECRET_ACCESS_KEY}"
-                            echo "ID: ${AWS_ACCESS_KEY_ID}"
-                        }
-                    }
+                    // AWS_ACCESS_KEY_ID = creds[0]
+                    // AWS_SECRET_ACCESS_KEY = creds[1]
+                    // AWS_SESSION_TOKEN = creds[2]
+                    // wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: AWS_ACCESS_KEY_ID], [password: AWS_SECRET_ACCESS_KEY], [password: AWS_SESSION_TOKEN]]]) {
+                    //     withEnv(['AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}', 'AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}', 'AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}']) {
+                    //         echo "TOKEN: ${AWS_SESSION_TOKEN}"
+                    //         echo "KEY: ${AWS_SECRET_ACCESS_KEY}"
+                    //         echo "ID: ${AWS_ACCESS_KEY_ID}"
+                    //     }
+                    // }
                     sh "aws sts get-caller-identity"
                 }
             }
