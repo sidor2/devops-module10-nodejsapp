@@ -54,10 +54,11 @@ pipeline {
                 }
             }
         }
-        stage('Fetch AWS Credentials from IMDSv2') {
+        stage('Helper output') {
             steps {
                 script {
-                    sh "aws sts get-caller-identity"
+                    // sh "aws sts get-caller-identity"
+                    sh "uname -a"
                 }
             }
         }
