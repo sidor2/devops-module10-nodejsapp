@@ -5,3 +5,4 @@ node_modules
 .idea/*
 
 creds.json
+docker-secret.yaml
