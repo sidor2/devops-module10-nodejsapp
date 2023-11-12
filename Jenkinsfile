@@ -57,7 +57,8 @@ pipeline {
         stage('Helper output') {
             steps {
                 script {
-                    getAwsEC2creds()
+                    def creds = getAwsEC2creds()
+                    echo "Access Key: ${creds[0]}"
                     sh "aws sts get-caller-identity"
                     // sh "uname -a"
                 }
