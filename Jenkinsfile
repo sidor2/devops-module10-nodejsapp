@@ -28,108 +28,58 @@ pipeline {
             }
         }
 
-        // stage('Run Tests') {
-        //     steps {
-        //         dir('app'){
-        //             sh 'npm install'
-        //             sh 'npm test'
-        //         }
-        //     }
-        // }
+        stage('Run Tests') {
+            steps {
+                dir('app'){
+                    // sh 'npm install'
+                    // sh 'npm test'
+                    echo 'Tests are not implemented yet'
+                }
+            }
+        }
 
-        // stage('Increment Version') {
-        //     steps {
-        //         script {
-        //             dir('app'){
-        //                 sh 'npm version patch'
+        stage('Increment Version') {
+            steps {
+                script {
+                    dir('app'){
+                        sh 'npm version patch'
 
-        //                 def packageJson = readJSON file: 'package.json'
-        //                 def version = packageJson.version
+                        def packageJson = readJSON file: 'package.json'
+                        def version = packageJson.version
 
-        //                 // set the new version as part of IMAGE_NAME
-        //                 env.IMAGE_NAME = "$DOCKER_IMAGE:$version"
+                        // set the new version as part of IMAGE_NAME
+                        env.IMAGE_NAME = "$DOCKER_IMAGE:$version"
 
-        //             }
-        //         }
-        //     }
-        // }
+                    }
+                }
+            }
+        }
         stage('Fetch AWS Credentials from IMDSv2') {
             steps {
                 script {
-                    // // Define metadata URL and headers for IMDSv2
-                    // def IMDSv2_URL = 'http://169.254.169.254/latest/meta-data/iam/security-credentials/'
-                    
-                    // def IMDSv2_TOKEN = sh (
-                    //     script: "curl -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\"",
-                    //     returnStdout: true
-                    // ).trim()
-                    
-                    // // Retrieve the role name
-                    // def ROLE_NAME = sh (
-                    //     script: "curl -H \"X-aws-ec2-metadata-token: ${IMDSv2_TOKEN}\" ${IMDSv2_URL}",
-                    //     returnStdout: true
-                    // ).trim()
-                    
-                    // // Retrieve the credentials
-                    // def CREDENTIALS = sh (
-                    //     script: "curl -H \"X-aws-ec2-metadata-token: ${IMDSv2_TOKEN}\" ${IMDSv2_URL}${ROLE_NAME}",
-                    //     returnStdout: true
-                    // ).trim()
-                    
-                    // def TEMP_ROLE = readJSON text: "${CREDENTIALS}"
-
-                    // // Extract credentials
-                    // AWS_ACCESS_KEY_ID = TEMP_ROLE.AccessKeyId
-                    // AWS_SECRET_ACCESS_KEY = TEMP_ROLE.SecretAccessKey
-                    // AWS_SESSION_TOKEN = TEMP_ROLE.Token
-
-                    // // Mask passwords and set environment variables
-                    // wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: AWS_ACCESS_KEY_ID], [password: AWS_SECRET_ACCESS_KEY], [password: AWS_SESSION_TOKEN]]]) {
-                    //     withEnv(['AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}', 'AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}', 'AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}']) {
-                    //         echo "TOKEN: ${AWS_SESSION_TOKEN}"
-                    //         echo "KEY: ${AWS_SECRET_ACCESS_KEY}"
-                    //         echo "ID: ${AWS_ACCESS_KEY_ID}"
-                    //     }
-                    // }
-                    // Retrieve AWS Credentials
-                    // def creds = getAwsEC2creds()
-                    // getAwsEC2creds
-
-                    // Extract individual credentials
-                    // def awsAccessKeyId = creds[0]
-                    // def awsSecretAccessKey = creds[1]
-                    // def awsSessionToken = creds[2]
-                    // AWS_ACCESS_KEY_ID = creds[0]
-                    // AWS_SECRET_ACCESS_KEY = creds[1]
-                    // AWS_SESSION_TOKEN = creds[2]
-                    // wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: AWS_ACCESS_KEY_ID], [password: AWS_SECRET_ACCESS_KEY], [password: AWS_SESSION_TOKEN]]]) {
-                    //     withEnv(['AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}', 'AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}', 'AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}']) {
-                    //         echo "TOKEN: ${AWS_SESSION_TOKEN}"
-                    //         echo "KEY: ${AWS_SECRET_ACCESS_KEY}"
-                    //         echo "ID: ${AWS_ACCESS_KEY_ID}"
-                    //     }
-                    // }
                     sh "aws sts get-caller-identity"
                 }
             }
         }
-        // stage('Build Docker Image') {
-        //     steps {
-        //         script {
-        //             def image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}"
-        //             echo "Building Docker Image: ${image}"
-        //             sh "which docker"
-        //             sh "docker build -t ${image} ."
-        //         }
-        //     }
-        // }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}"
+                    echo "Building Docker Image: ${image}"
+                    sh "which docker"
+                    sh "docker build -t ${image} ."
+                    sh "aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${env.DOCKER_REGISTRY}"
+                    sh "docker push ${image}"
+                }
+            }
+        }
 
-        // stage('commit to git'){
-        //     steps{
-        //         script{
-        //             commitToGithub("${GIT_CREDENTIALS}","devops-module10-nodejsapp","master")
-        //         }
-        //     }
-        // }
+        stage('commit to git'){
+            steps{
+                script{
+                    commitToGithub("${GIT_CREDENTIALS}","devops-module10-nodejsapp","master")
+                }
+            }
+        }
     }
 }
