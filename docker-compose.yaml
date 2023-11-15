@@ -1,7 +1,7 @@
 version: '3'
 services:
   my-app:
-    image: 253021321210.dkr.ecr.us-west-2.amazonaws.com/devops-module10:latest
+    image: ${IMAGE}
     ports:
      - 3000:3000
   mongodb:
