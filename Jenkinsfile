@@ -54,7 +54,7 @@ pipeline {
                 }
             }
         }
-        stage('Helper output') {
+        stage('Set AWS Credentials') {
             steps {
                 script {
                     def creds = getAwsEC2creds()
@@ -78,6 +78,21 @@ pipeline {
                     sh "docker build -t ${image} ."
                     sh "aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${env.DOCKER_REGISTRY}"
                     sh "docker push ${image}"
+                }
+            }
+        }
+
+        stage('Deploy to EC2 Instance') {
+            steps {
+                script {
+                    def shellCmd = "bash ./server-cmds.sh ${image}"
+                    def ec2Instance = "ec2-user@10.0.7.81"
+
+                    sshagent(['ec2devopskey']) {
+                        sh "scp -o StrictHostKeyChecking=no server-cmds.sh ${ec2Instance}:/home/ec2-user"
+                        sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ${ec2Instance}:/home/ec2-user"
+                        sh "ssh -o StrictHostKeyChecking=no ${ec2Instance} ${shellCmd}"
+                    }
                 }
             }
         }
