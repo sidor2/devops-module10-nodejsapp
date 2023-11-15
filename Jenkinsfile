@@ -73,11 +73,11 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}"
-                    echo "Building Docker Image: ${image}"
-                    sh "docker build -t ${image} ."
+                    def env.image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}"
+                    echo "Building Docker Image: ${env.image}"
+                    sh "docker build -t ${env.image} ."
                     sh "aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${env.DOCKER_REGISTRY}"
-                    sh "docker push ${image}"
+                    sh "docker push ${env.image}"
                 }
             }
         }
@@ -85,7 +85,7 @@ pipeline {
         stage('Deploy to EC2 Instance') {
             steps {
                 script {
-                    def shellCmd = "bash ./server-cmds.sh ${image}"
+                    def shellCmd = "bash ./server-cmds.sh ${env.image}"
                     def ec2Instance = "ec2-user@10.0.7.81"
 
                     sshagent(['ec2devopskey']) {
