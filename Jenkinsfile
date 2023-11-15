@@ -86,7 +86,7 @@ pipeline {
             steps {
                 script {
                     def shellCmd = "bash ./server-cmds.sh ${env.image}"
-                    def ec2Instance = "ec2-user@10.0.7.81"
+                    def ec2Instance = "ec2-user@35.163.228.131"
 
                     sshagent(['ec2devopskey']) {
                         sh "scp -o StrictHostKeyChecking=no server-cmds.sh ${ec2Instance}:/home/ec2-user"
