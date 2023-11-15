@@ -73,7 +73,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def env.image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}"
+                    env.image = "${env.DOCKER_REGISTRY}/${env.IMAGE_NAME}"
                     echo "Building Docker Image: ${env.image}"
                     sh "docker build -t ${env.image} ."
                     sh "aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${env.DOCKER_REGISTRY}"
